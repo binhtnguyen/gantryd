@@ -3,6 +3,7 @@
 from gantryd.client import GantryDClient
 import argparse
 import json
+import logging
 
 ETCD_HOST = '127.0.0.1'
 ETCD_PORT = 4001
@@ -74,6 +75,9 @@ def start():
   # Parse the arguments.
   args = parser.parse_args()
   port = int(args.etcd_port) if args.etcd_port else ETCD_PORT
+  
+  #setup logging
+  logging.basicConfig(level=logging.DEBUG)  
 
   # Initialize the gantryd client.
   dclient = GantryDClient(args.etcd_host or ETCD_HOST, args.project, port)

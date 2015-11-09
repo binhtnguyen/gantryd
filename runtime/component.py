@@ -66,6 +66,8 @@ class Component(object):
     client = getDockerClient()
     named_image = self.config.getFullImage()
     self.logger.debug('Finding image ID for component %s with named image %s', self.getName(), named_image)
+    #ensure the image is available before inspection.
+    self.ensureImage(client)
     result = client.inspect_image(named_image)
     return result['Id']
 
