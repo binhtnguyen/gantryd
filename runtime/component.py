@@ -7,6 +7,7 @@ from util import report, fail, getDockerClient, ReportLevels
 
 import time
 import logging
+import json
 
 class Component(object):
   """ A component that can be/is running. Tracks all the runtime information
@@ -159,6 +160,8 @@ class Component(object):
       checks.append((check, buildHealthCheck(check)))
 
     for (config, check) in checks:
+      report("Config: ")
+      report(config) 
       report('Running health check: ' + config.getTitle(), component=self)
       result = check.run(container, report)
       if not result:
@@ -344,6 +347,11 @@ class Component(object):
           return
 
     try:
-      client.pull(self.config.repo, tag=self.config.tag)
+      #todo:  This method did not seem to block until the pull is completed
+      #client.pull('digidock.digicert.com:5000/cis',tag='b14',stream=True);
+      #client.pull(self.config.repo, tag=self.config.tag, stream=True)
+      for line in client.pull(self.config.repo, tag=self.config.tag, stream=True):
+        self.logger.debug(json.dumps(json.loads(line), indent=4))
+        
     except Exception as e:
       fail('Could not pull repo ' + self.config.repo, component=self, exception=str(e))

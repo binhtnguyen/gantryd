@@ -3,6 +3,7 @@
 import argparse
 import signal
 import time
+import logging
 
 from actions import start_action, update_action, list_action, stop_action, kill_action
 from config.GantryConfig import Configuration
@@ -51,6 +52,9 @@ def monitor(component):
 
 
 def run():
+  #setup logging
+  logging.basicConfig(level=logging.DEBUG)
+  
   # Setup the gantry arguments
   parser = argparse.ArgumentParser(description='gantry continuous deployment system')
   parser.add_argument('config_file', help='The configuration file')
