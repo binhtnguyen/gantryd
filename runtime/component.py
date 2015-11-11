@@ -76,7 +76,10 @@ class Component(object):
     try:
       self.logger.debug('Attempting to pull repo for component %s: %s:%s', self.getName(), self.config.repo, self.config.tag)
       client = getDockerClient()
-      client.pull(self.config.repo, tag=self.config.tag)
+      #put in the stream output to block the pull process
+      for line in client.pull(self.config.repo, tag=self.config.tag, stream=True):
+        self.logger.debug(json.dumps(json.loads(line), indent=4))      
+      #client.pull(self.config.repo, tag=self.config.tag)
       return True
     except Exception as e:
       self.logger.exception(e)
@@ -345,6 +348,7 @@ class Component(object):
     images = client.images(name=self.config.repo)
     if images:
       for image in images:
+        self.logger.debug("Checking image: "+str(image))
         if 'RepoTags' in image.keys() and self.config.getFullImage() in image['RepoTags']:
           return
 
